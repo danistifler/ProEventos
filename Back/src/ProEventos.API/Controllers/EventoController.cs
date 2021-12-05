@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProEventos.API.Data;
 using ProEventos.API.Models;
 
 namespace ProEventos.API.Controllers
@@ -11,44 +12,25 @@ namespace ProEventos.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class EventoController : ControllerBase
-    {        
+    {
 
-        public IEnumerable<Evento> _evento =   new Evento[]
-            {
-                new Evento(){
-                EventoId = 1,
-                Tema = "Angular 11 e .Net 5",
-                Local = "São Paulo",
-                Lote = "1° Lote",
-                QtdPessoas = 250,
-                DataEvento = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy"),
-                ImagemUrl = "foto.png"
-                },
-             new Evento(){
-                EventoId = 2,
-                Tema = "Angular 11 e Suas Novidades",
-                Local = "Rio de Janeiro",
-                Lote = "2° Lote",
-                QtdPessoas = 350,
-                DataEvento = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy"),
-                ImagemUrl = "foto1.png"
-                }
-            };
+        private readonly DataContext _context;
 
-        public EventoController()
+        public EventoController(DataContext context)
         {
+            _context = context;
         }
 
         [HttpGet]
         public IEnumerable<Evento> Get()
         {
-            return _evento;
+            return _context.Eventos;
         }
 
-          [HttpGet("{id}")]
-        public IEnumerable<Evento> GetById(int id)
+        [HttpGet("{id}")]
+        public Evento GetById(int id)
         {
-            return _evento.Where(evento => evento.EventoId == id);
+            return _context.Eventos.FirstOrDefault(evento => evento.EventoId == id);
         }
 
         [HttpPost]
@@ -57,7 +39,7 @@ namespace ProEventos.API.Controllers
             return "value";
         }
 
-         [HttpPut("{id}")]
+        [HttpPut("{id}")]
         public string Put(int id)
         {
             return $"Exemplo Put com id = {id}";
@@ -69,5 +51,5 @@ namespace ProEventos.API.Controllers
             return $"Exemplo Delete com id = {id}";
         }
     }
-    }
+}
 
